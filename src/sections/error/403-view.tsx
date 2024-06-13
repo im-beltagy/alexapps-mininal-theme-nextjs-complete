@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 
 import { RouterLink } from 'src/routes/components';
 
+import { useTranslate } from 'src/locales';
 import CompactLayout from 'src/layouts/compact';
 import { ForbiddenIllustration } from 'src/assets/illustrations';
 
@@ -15,20 +16,22 @@ import { varBounce, MotionContainer } from 'src/components/animate';
 // ----------------------------------------------------------------------
 
 export default function View403() {
+  const { t } = useTranslate();
+
   return (
     <CompactLayout>
       <MotionContainer>
         <m.div variants={varBounce().in}>
           <Typography variant="h3" sx={{ mb: 2 }}>
-            No permission
+            {t('No permission')}
           </Typography>
         </m.div>
 
         <m.div variants={varBounce().in}>
           <Typography sx={{ color: 'text.secondary' }}>
-            The page you&apos;re trying access has restricted access.
+            {t("The page you're trying access has restricted access.")}
             <br />
-            Please refer to your system administrator
+            {t('Please refer to your system administrator')}
           </Typography>
         </m.div>
 
@@ -37,7 +40,7 @@ export default function View403() {
         </m.div>
 
         <Button component={RouterLink} href="/" size="large" variant="contained">
-          Go to Home
+          {t('Go to Home')}
         </Button>
       </MotionContainer>
     </CompactLayout>

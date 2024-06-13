@@ -1,11 +1,11 @@
-import { OverviewAppView } from 'src/sections/overview/app/view';
+import MainView from 'src/sections/main/view/main-view';
 
 // ----------------------------------------------------------------------
 
 export const metadata = {
-  title: 'Dashboard: App',
+  title: 'Variables | Al-Juraat Al-Tibbiya',
 };
 
 export default function OverviewAppPage() {
-  return <OverviewAppView />;
+  return <MainView />;
 }

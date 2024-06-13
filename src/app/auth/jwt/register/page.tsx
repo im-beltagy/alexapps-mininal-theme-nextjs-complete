@@ -3,7 +3,7 @@ import { JwtRegisterView } from 'src/sections/auth/jwt';
 // ----------------------------------------------------------------------
 
 export const metadata = {
-  title: 'Jwt: Register',
+  title: 'Register | Al-Juraat Al-Tibbiya',
 };
 
 export default function RegisterPage() {

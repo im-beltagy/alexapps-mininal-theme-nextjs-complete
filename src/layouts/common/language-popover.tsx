@@ -13,6 +13,8 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 // ----------------------------------------------------------------------
 
 export default function LanguagePopover() {
+  const { t } = useTranslate();
+
   const popover = usePopover();
 
   const { onChangeLang } = useTranslate();
@@ -55,7 +57,7 @@ export default function LanguagePopover() {
           >
             <Iconify icon={option.icon} sx={{ borderRadius: 0.65, width: 28 }} />
 
-            {option.label}
+            {t(option.label)}
           </MenuItem>
         ))}
       </CustomPopover>

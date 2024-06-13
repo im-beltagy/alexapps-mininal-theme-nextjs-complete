@@ -19,6 +19,7 @@ import { useRouter, useSearchParams } from 'src/routes/hooks';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { useTranslate } from 'src/locales';
 import { useAuthContext } from 'src/auth/hooks';
 import { PATH_AFTER_LOGIN } from 'src/config-global';
 
@@ -28,6 +29,8 @@ import FormProvider, { RHFTextField } from 'src/components/hook-form';
 // ----------------------------------------------------------------------
 
 export default function JwtLoginView() {
+  const { t } = useTranslate();
+
   const { login } = useAuthContext();
 
   const router = useRouter();
@@ -41,13 +44,15 @@ export default function JwtLoginView() {
   const password = useBoolean();
 
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    password: Yup.string().required('Password is required'),
+    email: Yup.string()
+      .required(t('Email is required'))
+      .email(t('Email must be a valid email address')),
+    password: Yup.string().required(t('Password is required')),
   });
 
   const defaultValues = {
-    email: 'demo@minimals.cc',
-    password: 'demo1234',
+    email: 'admin@admin.com',
+    password: 'password',
   };
 
   const methods = useForm({
@@ -75,13 +80,13 @@ export default function JwtLoginView() {
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>
-      <Typography variant="h4">Sign in to Minimal</Typography>
+      <Typography variant="h4">{t('Sign in to Al-Juraat Al-Tibbiya')}</Typography>
 
       <Stack direction="row" spacing={0.5}>
-        <Typography variant="body2">New user?</Typography>
+        <Typography variant="body2">{t('New user?')}</Typography>
 
         <Link component={RouterLink} href={paths.auth.jwt.register} variant="subtitle2">
-          Create an account
+          {t('Create an account')}
         </Link>
       </Stack>
     </Stack>
@@ -89,11 +94,11 @@ export default function JwtLoginView() {
 
   const renderForm = (
     <Stack spacing={2.5}>
-      <RHFTextField name="email" label="Email address" />
+      <RHFTextField name="email" label={t('Email address')} />
 
       <RHFTextField
         name="password"
-        label="Password"
+        label={t('Password')}
         type={password.value ? 'text' : 'password'}
         InputProps={{
           endAdornment: (
@@ -107,7 +112,7 @@ export default function JwtLoginView() {
       />
 
       <Link variant="body2" color="inherit" underline="always" sx={{ alignSelf: 'flex-end' }}>
-        Forgot password?
+        {t('Forgot password?')}
       </Link>
 
       <LoadingButton
@@ -118,7 +123,7 @@ export default function JwtLoginView() {
         variant="contained"
         loading={isSubmitting}
       >
-        Login
+        {t('Login')}
       </LoadingButton>
     </Stack>
   );
@@ -126,10 +131,6 @@ export default function JwtLoginView() {
   return (
     <>
       {renderHead}
-
-      <Alert severity="info" sx={{ mb: 3 }}>
-        Use email : <strong>demo@minimals.cc</strong> / password :<strong> demo1234</strong>
-      </Alert>
 
       {!!errorMsg && (
         <Alert severity="error" sx={{ mb: 3 }}>

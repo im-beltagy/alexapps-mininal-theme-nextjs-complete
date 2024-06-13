@@ -19,6 +19,7 @@ import { useRouter, useSearchParams } from 'src/routes/hooks';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { useTranslate } from 'src/locales';
 import { useAuthContext } from 'src/auth/hooks';
 import { PATH_AFTER_LOGIN } from 'src/config-global';
 
@@ -28,6 +29,8 @@ import FormProvider, { RHFTextField } from 'src/components/hook-form';
 // ----------------------------------------------------------------------
 
 export default function JwtRegisterView() {
+  const { t } = useTranslate();
+
   const { register } = useAuthContext();
 
   const router = useRouter();
@@ -41,10 +44,12 @@ export default function JwtRegisterView() {
   const password = useBoolean();
 
   const RegisterSchema = Yup.object().shape({
-    firstName: Yup.string().required('First name required'),
-    lastName: Yup.string().required('Last name required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    password: Yup.string().required('Password is required'),
+    firstName: Yup.string().required(t('First name required')),
+    lastName: Yup.string().required(t('Last name required')),
+    email: Yup.string()
+      .required(t('Email is required'))
+      .email(t('Email must be a valid email address')),
+    password: Yup.string().required(t('Password is required')),
   });
 
   const defaultValues = {
@@ -79,13 +84,13 @@ export default function JwtRegisterView() {
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5, position: 'relative' }}>
-      <Typography variant="h4">Get started absolutely free</Typography>
+      <Typography variant="h4">{t('Get started absolutely free')}</Typography>
 
       <Stack direction="row" spacing={0.5}>
-        <Typography variant="body2"> Already have an account? </Typography>
+        <Typography variant="body2"> {t('Already have an account?')} </Typography>
 
         <Link href={paths.auth.jwt.login} component={RouterLink} variant="subtitle2">
-          Sign in
+          {t('Sign in')}
         </Link>
       </Stack>
     </Stack>
@@ -103,11 +108,11 @@ export default function JwtRegisterView() {
     >
       {'By signing up, I agree to '}
       <Link underline="always" color="text.primary">
-        Terms of Service
+        {t('Terms of Service')}
       </Link>
       {' and '}
       <Link underline="always" color="text.primary">
-        Privacy Policy
+        {t('Privacy Policy')}
       </Link>
       .
     </Typography>
@@ -116,15 +121,15 @@ export default function JwtRegisterView() {
   const renderForm = (
     <Stack spacing={2.5}>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-        <RHFTextField name="firstName" label="First name" />
-        <RHFTextField name="lastName" label="Last name" />
+        <RHFTextField name="firstName" label={t('First name')} />
+        <RHFTextField name="lastName" label={t('Last name')} />
       </Stack>
 
-      <RHFTextField name="email" label="Email address" />
+      <RHFTextField name="email" label={t('Email address')} />
 
       <RHFTextField
         name="password"
-        label="Password"
+        label={t('Password')}
         type={password.value ? 'text' : 'password'}
         InputProps={{
           endAdornment: (
@@ -145,7 +150,7 @@ export default function JwtRegisterView() {
         variant="contained"
         loading={isSubmitting}
       >
-        Create account
+        {t('Create account')}
       </LoadingButton>
     </Stack>
   );

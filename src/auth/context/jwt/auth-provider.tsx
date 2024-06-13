@@ -1,11 +1,15 @@
 'use client';
 
+import Cookie from 'js-cookie';
 import { useMemo, useEffect, useReducer, useCallback } from 'react';
 
 import axios, { endpoints } from 'src/utils/axios';
 
+import { IUser } from 'src/@types/user';
+
 import { AuthContext } from './auth-context';
 import { setSession, isValidToken } from './utils';
+import { USER_KEY, ACCESS_TOKEN } from '../../constants';
 import { AuthUserType, ActionMapType, AuthStateType } from '../../types';
 
 // ----------------------------------------------------------------------
@@ -75,25 +79,22 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
 
 // ----------------------------------------------------------------------
 
-const STORAGE_KEY = 'accessToken';
-
 type Props = {
   children: React.ReactNode;
 };
 
-export function AuthProvider({ children }: Props) {
+export function AuthProvider({ children }: Readonly<Props>) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const initialize = useCallback(async () => {
     try {
-      const accessToken = sessionStorage.getItem(STORAGE_KEY);
+      const lang: string = Cookie.get('Language') || 'en';
+      Cookie.set('Language', lang);
+      const accessToken = sessionStorage.getItem(ACCESS_TOKEN);
+      const user: IUser | {} = sessionStorage.getItem(USER_KEY) ?? {};
 
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
-
-        const res = await axios.get(endpoints.auth.me);
-
-        const { user } = res.data;
 
         dispatch({
           type: Types.INITIAL,
@@ -128,23 +129,41 @@ export function AuthProvider({ children }: Props) {
   }, [initialize]);
 
   // LOGIN
-  const login = useCallback(async (email: string, password: string) => {
-    const data = {
-      email,
+  const login = useCallback(async (username: string, password: string) => {
+    const credentials = {
+      username,
       password,
     };
 
-    const res = await axios.post(endpoints.auth.login, data);
+    const res: { data: any } = {
+      data: {
+        id: '1fade818-7c9a-4736-9deb-d424af31ebe1',
+        account: '15922046',
+        name: null,
+        avatar: 'https://symlink.live/api//v1/null',
+        username: 'nahakygozo@mailinator.com',
+        email: 'nahakygozo@mailinator.com',
+        email_verified_at: null,
+        phone: null,
+        phone_verified_at: null,
+        role: 'CLIENT',
+        access_token:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5haGFreWdvem9AbWFpbGluYXRvci5jb20iLCJzdWIiOiIxZmFkZTgxOC03YzlhLTQ3MzYtOWRlYi1kNDI0YWYzMWViZTEiLCJpYXQiOjE3MTUxNDYyOTYsImV4cCI6MTczMDY5ODI5Nn0.5mK1zKeYt7Askn7CCpnuvDZlouWm3zbcxMpLJH_pUGE',
+      },
+    };
 
-    const { accessToken, user } = res.data;
-
+    const { data } = res;
+    const accessToken = res.data?.access_token;
     setSession(accessToken);
-
+    axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+    sessionStorage.setItem(USER_KEY, JSON.stringify(data));
+    Cookie.set(ACCESS_TOKEN, accessToken);
+    Cookie.set(USER_KEY, JSON.stringify(data));
     dispatch({
       type: Types.LOGIN,
       payload: {
         user: {
-          ...user,
+          ...data,
           accessToken,
         },
       },
@@ -165,7 +184,7 @@ export function AuthProvider({ children }: Props) {
 
       const { accessToken, user } = res.data;
 
-      sessionStorage.setItem(STORAGE_KEY, accessToken);
+      sessionStorage.setItem(ACCESS_TOKEN, accessToken);
 
       dispatch({
         type: Types.REGISTER,
